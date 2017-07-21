@@ -1,4 +1,4 @@
-# Enqueue Laravel Queue Extension
+# Laravel queue package
 
 [![Gitter](https://badges.gitter.im/php-enqueue/Lobby.svg)](https://gitter.im/php-enqueue/Lobby)
  
