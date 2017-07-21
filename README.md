@@ -6,7 +6,7 @@ You can use all transports built on top of [queue-interop](https://github.com/qu
 
 The package allows you to use queue interop transport the [laravel way](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/queues.md) as well as integrates the [enqueue simple client](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md#enqueue-simple-client).
 
-**NOTE: ** The part of this code was originally proposed as a PR to [laravel/framework#20148](https://github.com/laravel/framework/pull/20148). It was closed without much explanations though so I decided to open source it as a stand alone package. 
+**NOTE:** The part of this code was originally proposed as a PR to [laravel/framework#20148](https://github.com/laravel/framework/pull/20148). It was closed without much explanations though so I decided to open source it as a stand alone package. 
 
 ## Resources
 
