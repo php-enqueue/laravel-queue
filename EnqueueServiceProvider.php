@@ -42,8 +42,7 @@ class EnqueueServiceProvider extends ServiceProvider
         $this->app->singleton(SimpleClient::class, function() {
             /** @var \Illuminate\Config\Repository $config */
             $config = $this->app['config'];
-
-            var_dump($config->get('enqueue.client'));
+            
             return new SimpleClient($config->get('enqueue.client'));
         });
 
