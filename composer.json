@@ -27,6 +27,9 @@
             "/Tests/"
         ]
     },
+    "suggest": {
+        "enqueue/simple-client": "If you want to use enqueue client and cli commands"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "0.6.x-dev"
