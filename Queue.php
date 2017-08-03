@@ -51,20 +51,6 @@ class Queue extends BaseQueue implements QueueContract
     }
 
     /**
-     * Push a new job onto the queue.
-     *
-     * @param string $queue
-     * @param string $job
-     * @param mixed  $data
-     *
-     * @return mixed
-     */
-    public function pushOn($queue, $job, $data = '')
-    {
-        new \LogicException('to be implemented');
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function pushRaw($payload, $queue = null, array $options = [])
@@ -80,7 +66,13 @@ class Queue extends BaseQueue implements QueueContract
      */
     public function later($delay, $job, $data = '', $queue = null)
     {
-        new \LogicException('to be implemented');
+        $message = $this->psrContext->createMessage($this->createPayload($job, $data));
+
+        return $this->psrContext->createProducer()
+            ->setDeliveryDelay($this->secondsUntil($delay) * 1000)
+
+            ->send($this->getQueue($queue), $message)
+        ;
     }
 
     /**
