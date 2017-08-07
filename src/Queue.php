@@ -17,10 +17,11 @@ class Queue extends BaseQueue implements QueueContract
      * @var int
      */
     protected $timeToRun;
+
     /**
      * @var PsrContext
      */
-    private $psrContext;
+    protected $psrContext;
 
     /**
      * @param PsrContext $psrContext
