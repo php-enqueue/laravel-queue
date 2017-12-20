@@ -31,7 +31,7 @@
             "providers": [
                 "Enqueue\\LaravelQueue\\EnqueueServiceProvider"
             ]
-        }
+        },
         "branch-alias": {
             "dev-master": "0.8.x-dev"
         }
