@@ -27,6 +27,11 @@
         "enqueue/simple-client": "If you want to use enqueue client and cli commands"
     },
     "extra": {
+        "laravel": {
+            "providers": [
+                "Enqueue\\LaravelQueue\\EnqueueServiceProvider"
+            ]
+        },
         "branch-alias": {
             "dev-master": "0.8.x-dev"
         }
