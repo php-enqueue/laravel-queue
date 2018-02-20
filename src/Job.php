@@ -41,6 +41,11 @@ class Job extends BaseJob implements JobContract
         $this->psrMessage = $psrMessage;
         $this->connectionName = $connectionName;
     }
+    
+    public function getJobId()
+    {
+        return $this->psrMessage->getMessageId();
+    }
 
     /**
      * {@inheritdoc}
