@@ -54,7 +54,7 @@ class AmqpQueue extends Queue
      */
     protected function declareQueue($queue = null)
     {
-        $psrQueue = $this->getPsrContext()->createQueue($this->getQueue($queue));
+        $psrQueue = $this->getQueue($queue);
         $psrQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
 
         $this->getPsrContext()->declareQueue($psrQueue);
