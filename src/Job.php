@@ -8,6 +8,7 @@ use Illuminate\Queue\Jobs\Job as BaseJob;
 use Interop\Queue\PsrConsumer;
 use Interop\Queue\PsrContext;
 use Interop\Queue\PsrMessage;
+use Interop\Queue\DeliveryDelayNotSupportedException;
 
 class Job extends BaseJob implements JobContract
 {
@@ -41,7 +42,7 @@ class Job extends BaseJob implements JobContract
         $this->psrMessage = $psrMessage;
         $this->connectionName = $connectionName;
     }
-    
+
     public function getJobId()
     {
         return $this->psrMessage->getMessageId();
@@ -62,16 +63,18 @@ class Job extends BaseJob implements JobContract
      */
     public function release($delay = 0)
     {
-        if ($delay) {
-            throw new \LogicException('To be implemented');
-        }
-
         $requeueMessage = clone $this->psrMessage;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
 
-        $this->psrContext->createProducer()->send($this->psrConsumer->getQueue(), $requeueMessage);
+        $producer = $this->psrContext->createProducer();
+
+        try {
+            $producer->setDeliveryDelay($this->secondsUntil($delay) * 1000);
+        } catch (DeliveryDelayNotSupportedException $e) {
+        }
 
         $this->psrConsumer->acknowledge($this->psrMessage);
+        $producer->send($this->psrConsumer->getQueue(), $requeueMessage);
     }
 
     /**
