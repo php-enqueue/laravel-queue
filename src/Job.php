@@ -63,6 +63,8 @@ class Job extends BaseJob implements JobContract
      */
     public function release($delay = 0)
     {
+        parent::release($delay);
+
         $requeueMessage = clone $this->psrMessage;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
 
