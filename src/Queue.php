@@ -5,6 +5,7 @@ namespace Enqueue\LaravelQueue;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue as BaseQueue;
 use Interop\Queue\PsrContext;
+use Interop\Amqp\Impl\AmqpMessage;
 
 class Queue extends BaseQueue implements QueueContract
 {
@@ -58,7 +59,7 @@ class Queue extends BaseQueue implements QueueContract
     {
         $message = $this->psrContext->createMessage($payload);
 
-        if ($message instanceof \Interop\Amqp\Impl\AmqpMessage) {
+        if ($message instanceof AmqpMessage) {
             $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
         }
 
@@ -75,7 +76,7 @@ class Queue extends BaseQueue implements QueueContract
     {
         $message = $this->psrContext->createMessage($this->createPayload($job, $data));
 
-        if ($message instanceof \Interop\Amqp\Impl\AmqpMessage) {
+        if ($message instanceof AmqpMessage) {
             $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
         }
 
