@@ -24,11 +24,6 @@ class Queue extends BaseQueue implements QueueContract
     protected $psrContext;
 
     /**
-     * @var boolean
-     */
-    protected $persistent = false;
-
-    /**
      * @param PsrContext $psrContext
      * @param string     $queueName
      * @param int        $timeToRun
@@ -53,8 +48,6 @@ class Queue extends BaseQueue implements QueueContract
      */
     public function push($job, $data = '', $queue = null)
     {
-        $this->persistent = $job->persistent ?? false;
-
         return $this->pushRaw($this->createPayload($job, $data), $queue);
     }
 
@@ -65,7 +58,7 @@ class Queue extends BaseQueue implements QueueContract
     {
         $message = $this->psrContext->createMessage($payload);
 
-        if ($this->persistent) {
+        if ($message instanceof \Interop\Amqp\Impl\AmqpMessage) {
             $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
         }
 
@@ -82,7 +75,7 @@ class Queue extends BaseQueue implements QueueContract
     {
         $message = $this->psrContext->createMessage($this->createPayload($job, $data));
 
-        if (isset($job->persistent) && $job->persistent) {
+        if ($message instanceof \Interop\Amqp\Impl\AmqpMessage) {
             $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
         }
 
