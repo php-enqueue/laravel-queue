@@ -5,6 +5,7 @@ namespace Enqueue\LaravelQueue;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue as BaseQueue;
 use Interop\Queue\PsrContext;
+use Interop\Amqp\Impl\AmqpMessage;
 
 class Queue extends BaseQueue implements QueueContract
 {
@@ -56,9 +57,15 @@ class Queue extends BaseQueue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = [])
     {
+        $message = $this->psrContext->createMessage($payload);
+
+        if ($message instanceof AmqpMessage) {
+            $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
+        }
+
         return $this->psrContext->createProducer()->send(
             $this->getQueue($queue),
-            $this->psrContext->createMessage($payload)
+            $message
         );
     }
 
@@ -69,11 +76,13 @@ class Queue extends BaseQueue implements QueueContract
     {
         $message = $this->psrContext->createMessage($this->createPayload($job, $data));
 
+        if ($message instanceof AmqpMessage) {
+            $message->setDeliveryMode(\Interop\Amqp\AmqpMessage::DELIVERY_MODE_PERSISTENT);
+        }
+
         return $this->psrContext->createProducer()
             ->setDeliveryDelay($this->secondsUntil($delay) * 1000)
-
-            ->send($this->getQueue($queue), $message)
-        ;
+            ->send($this->getQueue($queue), $message);
     }
 
     /**
