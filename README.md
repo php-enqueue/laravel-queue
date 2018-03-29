@@ -7,7 +7,6 @@ It also supports extended AMQP features such as queue declaration and message de
 
 The package allows you to use queue interop transport the [laravel way](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/queues.md) as well as integrates the [enqueue simple client](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/laravel/quick_tour.md#enqueue-simple-client). 
 
-To make message [persistent](https://www.rabbitmq.com/persistence-conf.html) add to Laravel Job class field `public $persistent = true;`
 ## Resources
 
 * [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
