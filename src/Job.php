@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job as BaseJob;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Message;
 
 class Job extends BaseJob implements JobContract
@@ -35,6 +36,11 @@ class Job extends BaseJob implements JobContract
         $this->connectionName = $connectionName;
     }
 
+    public function getJobId()
+    {
+        return $this->message->getMessageId();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -50,16 +56,20 @@ class Job extends BaseJob implements JobContract
      */
     public function release($delay = 0)
     {
-        if ($delay) {
-            throw new \LogicException('To be implemented');
-        }
+        parent::release($delay);
 
         $requeueMessage = clone $this->message;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
+        
+        $producer = $this->context->createProducer();
 
-        $this->context->createProducer()->send($this->consumer->getQueue(), $requeueMessage);
+        try {
+            $producer->setDeliveryDelay($this->secondsUntil($delay) * 1000);
+        } catch (DeliveryDelayNotSupportedException $e) {
+        }
 
         $this->consumer->acknowledge($this->message);
+        $producer->send($this->consumer->getQueue(), $requeueMessage);
     }
 
     public function getQueue()

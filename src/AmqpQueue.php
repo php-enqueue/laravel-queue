@@ -54,8 +54,8 @@ class AmqpQueue extends Queue
      */
     protected function declareQueue($queue = null)
     {
-        $queue = $this->getQueueInteropContext()->createQueue($this->getQueue($queue));
-        $queue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
+        $interopQueue = $this->getQueue($queue);
+        $interopQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
 
         $this->getQueueInteropContext()->declareQueue($queue);
     }
