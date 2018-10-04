@@ -4,7 +4,7 @@ namespace Enqueue\LaravelQueue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue as BaseQueue;
-use Interop\Queue\PsrContext;
+use Interop\Queue\Context;
 
 class Queue extends BaseQueue implements QueueContract
 {
@@ -19,18 +19,18 @@ class Queue extends BaseQueue implements QueueContract
     protected $timeToRun;
 
     /**
-     * @var PsrContext
+     * @var Context
      */
-    protected $psrContext;
+    protected $context;
 
     /**
-     * @param PsrContext $psrContext
-     * @param string     $queueName
-     * @param int        $timeToRun
+     * @param Context $amqpContext
+     * @param string  $queueName
+     * @param int     $timeToRun
      */
-    public function __construct(PsrContext $psrContext, $queueName, $timeToRun)
+    public function __construct(Context $amqpContext, $queueName, $timeToRun)
     {
-        $this->psrContext = $psrContext;
+        $this->context = $amqpContext;
         $this->queueName = $queueName;
         $this->timeToRun = $timeToRun;
     }
@@ -56,9 +56,9 @@ class Queue extends BaseQueue implements QueueContract
      */
     public function pushRaw($payload, $queue = null, array $options = [])
     {
-        return $this->psrContext->createProducer()->send(
+        $this->context->createProducer()->send(
             $this->getQueue($queue),
-            $this->psrContext->createMessage($payload)
+            $this->context->createMessage($payload)
         );
     }
 
@@ -67,29 +67,26 @@ class Queue extends BaseQueue implements QueueContract
      */
     public function later($delay, $job, $data = '', $queue = null)
     {
-        $message = $this->psrContext->createMessage($this->createPayload($job, $data));
+        $message = $this->context->createMessage($this->createPayload($job, $data));
 
-        return $this->psrContext->createProducer()
+        $this->context->createProducer()
             ->setDeliveryDelay($this->secondsUntil($delay) * 1000)
 
             ->send($this->getQueue($queue), $message)
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function pop($queue = null)
     {
         $queue = $this->getQueue($queue);
 
-        $psrConsumer = $this->psrContext->createConsumer($queue);
-        if ($psrMessage = $psrConsumer->receive(1000)) { // 1 sec
+        $consumer = $this->context->createConsumer($queue);
+        if ($message = $consumer->receive(1000)) { // 1 sec
             return new Job(
                 $this->container,
-                $this->psrContext,
-                $psrConsumer,
-                $psrMessage,
+                $this->context,
+                $consumer,
+                $message,
                 $this->connectionName
             );
         }
@@ -100,19 +97,19 @@ class Queue extends BaseQueue implements QueueContract
      *
      * @param string|null $queue
      *
-     * @return \Interop\Queue\PsrQueue
+     * @return \Interop\Queue\Queue
      */
     public function getQueue($queue = null)
     {
-        return $this->psrContext->createQueue($queue ?: $this->queueName);
+        return $this->context->createQueue($queue ?: $this->queueName);
     }
 
     /**
-     * @return PsrContext
+     * @return Context
      */
-    public function getPsrContext()
+    public function getQueueInteropContext()
     {
-        return $this->psrContext;
+        return $this->context;
     }
 
     /**

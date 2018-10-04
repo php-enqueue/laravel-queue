@@ -3,7 +3,7 @@
 namespace Enqueue\LaravelQueue;
 
 use Illuminate\Queue\Connectors\ConnectorInterface;
-use Interop\Queue\PsrConnectionFactory;
+use Interop\Queue\ConnectionFactory;
 
 class Connector implements ConnectorInterface
 {
@@ -28,11 +28,11 @@ class Connector implements ConnectorInterface
         }
 
         $rc = new \ReflectionClass($factoryClass);
-        if (false == $rc->implementsInterface(PsrConnectionFactory::class)) {
-            throw new \LogicException(sprintf('The "connection_factory_class" option must contain a class that implements "%s" but it is not', PsrConnectionFactory::class));
+        if (false == $rc->implementsInterface(ConnectionFactory::class)) {
+            throw new \LogicException(sprintf('The "connection_factory_class" option must contain a class that implements "%s" but it is not', ConnectionFactory::class));
         }
 
-        /** @var PsrConnectionFactory $factory */
+        /** @var ConnectionFactory $factory */
         $factory = new $factoryClass($config);
 
         return new Queue($factory->createContext(), $config['queue'], $config['time_to_run']);

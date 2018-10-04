@@ -1,11 +1,10 @@
 <?php
 namespace Enqueue\LaravelQueue\Command;
 
-
 use Enqueue\Container\Container;
 use Enqueue\SimpleClient\SimpleClient;
 
-class SetupBrokerCommand extends \Enqueue\Symfony\Client\SetupBrokerCommand
+class RoutesCommand extends \Enqueue\Symfony\Client\RoutesCommand
 {
     public function __construct(SimpleClient $client)
     {

@@ -16,12 +16,10 @@ class AmqpConnector extends Connector
 
         $config = array_replace(['delay_strategy' => 'rabbitmq_dlx'], $config);
 
-
-
         /** @var AmqpContext $amqpContext */
-        $amqpContext = $queue->getPsrContext();
+        $amqpContext = $queue->getQueueInteropContext();
         if (false == $amqpContext instanceof AmqpContext) {
-            throw new \LogicException(sprintf('The context must be instance of "%s" but got "%s"', AmqpContext::class, get_class($queue->getPsrContext())));
+            throw new \LogicException(sprintf('The context must be instance of "%s" but got "%s"', AmqpContext::class, get_class($queue->getQueueInteropContext())));
         }
 
         if ($amqpContext instanceof DelayStrategyAware && 'rabbitmq_dlx' == $config['delay_strategy']) {
