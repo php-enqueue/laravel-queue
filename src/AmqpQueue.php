@@ -5,18 +5,18 @@ namespace Enqueue\LaravelQueue;
 use Interop\Amqp\AmqpContext;
 
 /**
- * @method AmqpContext getPsrContext()
+ * @method AmqpContext getQueueInteropContext()
  */
 class AmqpQueue extends Queue
 {
     /**
      * {@inheritdoc}
      *
-     * @param AmqpContext $psrContext
+     * @param AmqpContext $amqpContext
      */
-    public function __construct(AmqpContext $psrContext, $queueName, $timeToRun)
+    public function __construct(AmqpContext $amqpContext, $queueName, $timeToRun)
     {
-        parent::__construct($psrContext, $queueName, $timeToRun);
+        parent::__construct($amqpContext, $queueName, $timeToRun);
     }
 
     /**
@@ -54,9 +54,9 @@ class AmqpQueue extends Queue
      */
     protected function declareQueue($queue = null)
     {
-        $psrQueue = $this->getQueue($queue);
-        $psrQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
+        $interopQueue = $this->getQueue($queue);
+        $interopQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
 
-        $this->getPsrContext()->declareQueue($psrQueue);
+        $this->getQueueInteropContext()->declareQueue($queue);
     }
 }

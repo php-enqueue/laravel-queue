@@ -2,28 +2,21 @@
 
 namespace Enqueue\LaravelQueue;
 
-use Enqueue\LaravelQueue\Command\ConsumeMessagesCommand;
-use Enqueue\LaravelQueue\Command\ProduceMessageCommand;
-use Enqueue\LaravelQueue\Command\QueuesCommand;
+use Enqueue\LaravelQueue\Command\ConsumeCommand;
+use Enqueue\LaravelQueue\Command\ProduceCommand;
+use Enqueue\LaravelQueue\Command\RoutesCommand;
 use Enqueue\LaravelQueue\Command\SetupBrokerCommand;
-use Enqueue\LaravelQueue\Command\TopicsCommand;
 use Enqueue\SimpleClient\SimpleClient;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\ServiceProvider;
 
 class EnqueueServiceProvider extends ServiceProvider
 {
-    /**
-     * {@inheritdoc}
-     */
     public function boot()
     {
         $this->bootInteropQueueDriver();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function register()
     {
         $this->registerClient();
@@ -49,10 +42,9 @@ class EnqueueServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 SetupBrokerCommand::class,
-                ProduceMessageCommand::class,
-                QueuesCommand::class,
-                TopicsCommand::class,
-                ConsumeMessagesCommand::class,
+                ProduceCommand::class,
+                RoutesCommand::class,
+                ConsumeCommand::class,
             ]);
         }
     }

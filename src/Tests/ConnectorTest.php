@@ -8,7 +8,7 @@ use Enqueue\Null\NullConnectionFactory;
 use Enqueue\Null\NullContext;
 use Enqueue\Test\ClassExtensionTrait;
 use Illuminate\Queue\Connectors\ConnectorInterface;
-use Interop\Queue\PsrQueue;
+use Interop\Queue\Queue as InteropQueue;
 use PHPUnit\Framework\TestCase;
 
 class ConnectorTest extends TestCase
@@ -45,7 +45,7 @@ class ConnectorTest extends TestCase
         ]);
     }
 
-    public function testThrowIfConnectorFactoryClassOptionDoesNotImplementPsrConnectionFactoryInterface()
+    public function testThrowIfConnectorFactoryClassOptionDoesNotImplementConnectionFactoryInterface()
     {
         $connector = new Connector();
 
@@ -71,9 +71,9 @@ class ConnectorTest extends TestCase
 
         $queue = $connector->connect(['connection_factory_class' => NullConnectionFactory::class]);
 
-        $this->assertInstanceOf(NullContext::class, $queue->getPsrContext());
+        $this->assertInstanceOf(NullContext::class, $queue->getQueueInteropContext());
 
-        $this->assertInstanceOf(PsrQueue::class, $queue->getQueue());
+        $this->assertInstanceOf(InteropQueue::class, $queue->getQueue());
         $this->assertSame('default', $queue->getQueue()->getQueueName());
 
         $this->assertSame(0, $queue->getTimeToRun());
@@ -89,9 +89,9 @@ class ConnectorTest extends TestCase
             'time_to_run' => 123,
         ]);
 
-        $this->assertInstanceOf(NullContext::class, $queue->getPsrContext());
+        $this->assertInstanceOf(NullContext::class, $queue->getQueueInteropContext());
 
-        $this->assertInstanceOf(PsrQueue::class, $queue->getQueue());
+        $this->assertInstanceOf(InteropQueue::class, $queue->getQueue());
         $this->assertSame('theCustomQueue', $queue->getQueue()->getQueueName());
 
         $this->assertSame(123, $queue->getTimeToRun());

@@ -5,47 +5,40 @@ namespace Enqueue\LaravelQueue;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\Job as BaseJob;
-use Interop\Queue\PsrConsumer;
-use Interop\Queue\PsrContext;
-use Interop\Queue\PsrMessage;
-use Interop\Queue\DeliveryDelayNotSupportedException;
+use Interop\Queue\Consumer;
+use Interop\Queue\Context;
+use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
+use Interop\Queue\Message;
 
 class Job extends BaseJob implements JobContract
 {
     /**
-     * @var PsrContext
+     * @var Context
      */
-    private $psrContext;
+    private $context;
 
     /**
-     * @var PsrConsumer
+     * @var Consumer
      */
-    private $psrConsumer;
+    private $consumer;
 
     /**
-     * @var PsrMessage
+     * @var Message
      */
-    private $psrMessage;
+    private $message;
 
-    /**
-     * @param Container   $container
-     * @param PsrContext  $psrContext
-     * @param PsrConsumer $psrConsumer
-     * @param PsrMessage  $psrMessage
-     * @param string      $connectionName
-     */
-    public function __construct(Container $container, PsrContext $psrContext, PsrConsumer $psrConsumer, PsrMessage $psrMessage, $connectionName)
+    public function __construct(Container $container, Context $context, Consumer $consumer, Message $message, $connectionName)
     {
         $this->container = $container;
-        $this->psrContext = $psrContext;
-        $this->psrConsumer = $psrConsumer;
-        $this->psrMessage = $psrMessage;
+        $this->context = $context;
+        $this->consumer = $consumer;
+        $this->message = $message;
         $this->connectionName = $connectionName;
     }
 
     public function getJobId()
     {
-        return $this->psrMessage->getMessageId();
+        return $this->message->getMessageId();
     }
 
     /**
@@ -55,7 +48,7 @@ class Job extends BaseJob implements JobContract
     {
         parent::delete();
 
-        $this->psrConsumer->acknowledge($this->psrMessage);
+        $this->consumer->acknowledge($this->message);
     }
 
     /**
@@ -65,41 +58,32 @@ class Job extends BaseJob implements JobContract
     {
         parent::release($delay);
 
-        $requeueMessage = clone $this->psrMessage;
+        $requeueMessage = clone $this->message;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
-
-        $producer = $this->psrContext->createProducer();
+        
+        $producer = $this->context->createProducer();
 
         try {
             $producer->setDeliveryDelay($this->secondsUntil($delay) * 1000);
         } catch (DeliveryDelayNotSupportedException $e) {
         }
 
-        $this->psrConsumer->acknowledge($this->psrMessage);
-        $producer->send($this->psrConsumer->getQueue(), $requeueMessage);
+        $this->consumer->acknowledge($this->message);
+        $producer->send($this->consumer->getQueue(), $requeueMessage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getQueue()
     {
-        return $this->psrConsumer->getQueue()->getQueueName();
+        return $this->consumer->getQueue()->getQueueName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attempts()
     {
-        return $this->psrMessage->getProperty('x-attempts', 1);
+        return $this->message->getProperty('x-attempts', 1);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRawBody()
     {
-        return $this->psrMessage->getBody();
+        return $this->message->getBody();
     }
 }
