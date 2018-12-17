@@ -1,19 +1,17 @@
 <?php
 namespace Enqueue\LaravelQueue\Command;
 
-use Enqueue\Container\Container;
 use Enqueue\SimpleClient\SimpleClient;
+use Enqueue\Symfony\Client\SimpleConsumeCommand;
 
-class ConsumeCommand extends \Enqueue\Symfony\Client\ConsumeCommand
+class ConsumeCommand extends SimpleConsumeCommand
 {
     public function __construct(SimpleClient $client)
     {
-        $container = new Container([
-            'queue_consumer' => $client->getQueueConsumer(),
-            'driver' => $client->getDriver(),
-            'processor' => $client->getDelegateProcessor()
-        ]);
-
-        parent::__construct($container, 'queue_consumer', 'driver', 'processor');
+        parent::__construct(
+            $client->getQueueConsumer(),
+            $client->getDriver(),
+            $client->getDelegateProcessor()
+        );
     }
 }

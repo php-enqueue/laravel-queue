@@ -1,17 +1,13 @@
 <?php
 namespace Enqueue\LaravelQueue\Command;
 
-use Enqueue\Container\Container;
 use Enqueue\SimpleClient\SimpleClient;
+use Enqueue\Symfony\Client\SimpleProduceCommand;
 
-class ProduceCommand extends \Enqueue\Symfony\Client\ProduceCommand
+class ProduceCommand extends SimpleProduceCommand
 {
     public function __construct(SimpleClient $client)
     {
-        $container = new Container([
-            'producer' => $client->getProducer(),
-        ]);
-
-        parent::__construct($container, 'producer');
+        parent::__construct($client->getProducer());
     }
 }

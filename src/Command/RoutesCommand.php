@@ -1,17 +1,13 @@
 <?php
 namespace Enqueue\LaravelQueue\Command;
 
-use Enqueue\Container\Container;
 use Enqueue\SimpleClient\SimpleClient;
+use Enqueue\Symfony\Client\SimpleRoutesCommand;
 
-class RoutesCommand extends \Enqueue\Symfony\Client\RoutesCommand
+class RoutesCommand extends SimpleRoutesCommand
 {
     public function __construct(SimpleClient $client)
     {
-        $container = new Container([
-            'driver' => $client->getDriver(),
-        ]);
-
-        parent::__construct($container, 'driver');
+        parent::__construct($client->getDriver());
     }
 }

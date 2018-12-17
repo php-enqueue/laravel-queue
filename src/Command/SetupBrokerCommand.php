@@ -1,18 +1,13 @@
 <?php
 namespace Enqueue\LaravelQueue\Command;
 
-
-use Enqueue\Container\Container;
 use Enqueue\SimpleClient\SimpleClient;
+use Enqueue\Symfony\Client\SimpleSetupBrokerCommand;
 
-class SetupBrokerCommand extends \Enqueue\Symfony\Client\SetupBrokerCommand
+class SetupBrokerCommand extends SimpleSetupBrokerCommand
 {
     public function __construct(SimpleClient $client)
     {
-        $container = new Container([
-            'driver' => $client->getDriver(),
-        ]);
-
-        parent::__construct($container, 'driver');
+        parent::__construct($client->getDriver());
     }
 }
