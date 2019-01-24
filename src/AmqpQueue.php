@@ -57,6 +57,6 @@ class AmqpQueue extends Queue
         $interopQueue = $this->getQueue($queue);
         $interopQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
 
-        $this->getQueueInteropContext()->declareQueue($queue);
+        $this->getQueueInteropContext()->declareQueue($interopQueue);
     }
 }
