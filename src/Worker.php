@@ -40,8 +40,6 @@ class Worker extends \Illuminate\Queue\Worker implements
 
     public function daemon($connectionName, $queueNames, WorkerOptions $options)
     {
-        // TODO: sleep when no job
-
         $this->connectionName = $connectionName;
         $this->queueNames = $queueNames;
         $this->options = $options;
