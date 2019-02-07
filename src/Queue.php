@@ -4,8 +4,10 @@ namespace Enqueue\LaravelQueue;
 
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue as BaseQueue;
+use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Amqp\Impl\AmqpMessage;
+use Interop\Queue\Message;
 
 class Queue extends BaseQueue implements QueueContract
 {
@@ -91,14 +93,19 @@ class Queue extends BaseQueue implements QueueContract
 
         $consumer = $this->context->createConsumer($queue);
         if ($message = $consumer->receive(1000)) { // 1 sec
-            return new Job(
-                $this->container,
-                $this->context,
-                $consumer,
-                $message,
-                $this->connectionName
-            );
+            return $this->convertMessageToJob($message, $consumer);
         }
+    }
+    
+    public function convertMessageToJob(Message $message, Consumer $consumer): Job
+    {
+        return new Job(
+            $this->container,
+            $this->context,
+            $consumer,
+            $message,
+            $this->connectionName
+        );
     }
 
     /**
