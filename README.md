@@ -43,7 +43,7 @@ The package allows you to use queue interop transport the [laravel way](https://
 
 ## Resources
 
-* [Documentation](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/index.md)
+* [Documentation](https://github.com/php-enqueue/enqueue-dev/tree/master/docs/laravel)
 * [Questions](https://gitter.im/php-enqueue/Lobby)
 * [Issue Tracker](https://github.com/php-enqueue/enqueue-dev/issues)
 
