@@ -7,6 +7,7 @@ use Enqueue\LaravelQueue\Command\ProduceCommand;
 use Enqueue\LaravelQueue\Command\RoutesCommand;
 use Enqueue\LaravelQueue\Command\SetupBrokerCommand;
 use Enqueue\SimpleClient\SimpleClient;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\ServiceProvider;
 
@@ -60,6 +61,12 @@ class EnqueueServiceProvider extends ServiceProvider
 
         $manager->addConnector('amqp_interop', function () {
             return new AmqpConnector();
+        });
+
+        $this->app->extend('queue.worker', function ($worker, $app) {
+            return new Worker(
+                $app['queue'], $app['events'], $app[ExceptionHandler::class]
+            );
         });
     }
 }
