@@ -37,7 +37,7 @@ The package allows you to use queue interop transport the [laravel way](https://
 * You can [monitor](https://github.com/php-enqueue/enqueue-dev/blob/master/docs/monitoring.md) any transport, not only redis 
 * Adds extension points
 * AMQP friendly. 
-* Popular soliution, big and active community around the project
+* Popular solution, big and active community around the project
 * Supported by a company - Forma-Pro
 
 
