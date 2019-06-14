@@ -49,7 +49,7 @@ class Worker extends \Illuminate\Queue\Worker implements
         $this->interop = $this->queue instanceof Queue;
 
         if (false == $this->interop) {
-            parent::daemon($connectionName, $this->queue, $options);
+            parent::daemon($connectionName, $this->queueNames, $options);
         }
 
         $context = $this->queue->getQueueInteropContext();
@@ -76,7 +76,7 @@ class Worker extends \Illuminate\Queue\Worker implements
         $this->interop = $this->queue instanceof Queue;
 
         if (false == $this->interop) {
-            parent::daemon($connectionName, $this->queue, $options);
+            parent::daemon($connectionName, $this->queueNames, $options);
         }
 
         $context = $this->queue->getQueueInteropContext();
