@@ -65,7 +65,12 @@ class EnqueueServiceProvider extends ServiceProvider
 
         $this->app->extend('queue.worker', function ($worker, $app) {
             return new Worker(
-                $app['queue'], $app['events'], $app[ExceptionHandler::class]
+                $app['queue'],
+                $app['events'],
+                $app[ExceptionHandler::class],
+                function () use ($app) {
+                    return $app->isDownForMaintenance();
+                }
             );
         });
     }
