@@ -33,10 +33,10 @@ class EnqueueServiceProvider extends ServiceProvider
             throw new \LogicException('The enqueue/simple-client package is not installed');
         }
 
-        $this->app->singleton(SimpleClient::class, function() {
+        $this->app->singleton(SimpleClient::class, function () {
             /** @var \Illuminate\Config\Repository $config */
             $config = $this->app['config'];
-            
+
             return new SimpleClient($config->get('enqueue.client'));
         });
 
@@ -65,7 +65,9 @@ class EnqueueServiceProvider extends ServiceProvider
 
         $this->app->extend('queue.worker', function ($worker, $app) {
             return new Worker(
-                $app['queue'], $app['events'], $app[ExceptionHandler::class]
+                $app['queue'], $app['events'], $app[ExceptionHandler::class], function () use ($app) {
+                return $app->isDownForMaintenance();
+            }
             );
         });
     }
