@@ -9,7 +9,7 @@
         "illuminate/queue": "^6.0|^7.0|^8.0",
         "queue-interop/amqp-interop": "^0.8",
         "queue-interop/queue-interop": "^0.7|^0.8",
-        "enqueue/enqueue-dev": "^0.10",
+        "enqueue/enqueue-dev": "dev-master",
         "enqueue/dsn": "^0.10"
     },
     "require-dev": {
