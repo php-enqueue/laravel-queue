@@ -9,6 +9,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Message;
+use ReflectionClass;
 
 class Job extends BaseJob implements JobContract
 {
@@ -63,6 +64,33 @@ class Job extends BaseJob implements JobContract
         } else {
             return parent::fire();
         }
+    }
+
+    /**
+     * In case the payload is not a serialised PHP message, provide a default fall back
+     *
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function payload()
+    {
+        if (empty(parent::payload())) {
+            $handlerClass = config('queue.connections.interop.handler');
+
+            if (! empty($handlerClass)) {
+                return [
+                    'job' =>  $handlerClass
+                ];
+            } else {
+                $className = new ReflectionClass(get_class($this));
+
+                return [
+                    'job' => dirname($className->getFileName())
+                ];
+            }
+        }
+
+        return parent::payload();
     }
 
     /**
