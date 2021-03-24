@@ -58,9 +58,10 @@ class Job extends BaseJob implements JobContract
     public function fire()
     {
         $handlerClass = config('queue.connections.interop.handler');
+        $timeout = config('queue.connections.interop.timeout');
 
         if (! empty($handlerClass)) {
-            return (new $handlerClass($this->consumer->receive()))->handle();
+            return (new $handlerClass($this->consumer->receive($timeout)))->handle();
         } else {
             return parent::fire();
         }
