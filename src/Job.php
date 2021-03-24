@@ -54,13 +54,27 @@ class Job extends BaseJob implements JobContract
     /**
      * {@inheritdoc}
      */
+    public function fire()
+    {
+        $handlerClass = config('queue.connections.interop.handler');
+
+        if (! empty($handlerClass)) {
+            return (new $handlerClass($this->consumer->receive()))->handle();
+        } else {
+            return parent::fire();
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function release($delay = 0)
     {
         parent::release($delay);
 
         $requeueMessage = clone $this->message;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
-        
+
         $producer = $this->context->createProducer();
 
         try {
