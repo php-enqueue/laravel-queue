@@ -57,8 +57,8 @@ class Job extends BaseJob implements JobContract
      */
     public function fire()
     {
-        $handlerClass = config('queue.connections.interop.handler');
-        $timeout = config('queue.connections.interop.timeout');
+        $handlerClass = config('queue.connections.' . $this->getConnectionName() . '.handler');
+        $timeout = config('queue.connections.' . $this->getConnectionName() . '.timeout');
 
         if (! empty($handlerClass)) {
             return (new $handlerClass($this->consumer->receive($timeout)))->handle();
@@ -76,17 +76,11 @@ class Job extends BaseJob implements JobContract
     public function payload()
     {
         if (empty(parent::payload())) {
-            $handlerClass = config('queue.connections.interop.handler');
+            $handlerClass = config('queue.connections.' . $this->getConnectionName() . '.handler');
 
             if (! empty($handlerClass)) {
                 return [
                     'job' =>  $handlerClass
-                ];
-            } else {
-                $className = new ReflectionClass(get_class($this));
-
-                return [
-                    'job' => dirname($className->getFileName())
                 ];
             }
         }
