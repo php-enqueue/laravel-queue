@@ -77,7 +77,7 @@ class Worker extends \Illuminate\Queue\Worker implements
         $this->interop = $this->queue instanceof Queue;
 
         if (false == $this->interop) {
-            parent::daemon($connectionName, $this->queueNames, $options);
+            parent::runNextJob($connectionName, $this->queueNames, $options);
             return;
         }
 
