@@ -10,6 +10,11 @@ use Interop\Amqp\AmqpContext;
 class AmqpQueue extends Queue
 {
     /**
+     * @var int
+     */
+    protected $size = 0;
+
+    /**
      * {@inheritdoc}
      *
      * @param AmqpContext $amqpContext
@@ -17,6 +22,16 @@ class AmqpQueue extends Queue
     public function __construct(AmqpContext $amqpContext, $queueName, $timeToRun)
     {
         parent::__construct($amqpContext, $queueName, $timeToRun);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function size($queue = null)
+    {
+        $this->declareQueue($queue);
+
+        return $this->size;
     }
 
     /**
@@ -57,6 +72,6 @@ class AmqpQueue extends Queue
         $interopQueue = $this->getQueue($queue);
         $interopQueue->addFlag(\Interop\Amqp\AmqpQueue::FLAG_DURABLE);
 
-        $this->getQueueInteropContext()->declareQueue($interopQueue);
+        $this->size = $this->getQueueInteropContext()->declareQueue($interopQueue);
     }
 }
