@@ -13,6 +13,11 @@ use Illuminate\Support\ServiceProvider;
 
 class EnqueueServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array
+     */
+    protected $extensions = [];
+
     public function boot()
     {
         $this->bootInteropQueueDriver();
@@ -36,7 +41,7 @@ class EnqueueServiceProvider extends ServiceProvider
         $this->app->singleton(SimpleClient::class, function() {
             /** @var \Illuminate\Config\Repository $config */
             $config = $this->app['config'];
-            
+
             return new SimpleClient($config->get('enqueue.client'));
         });
 
@@ -64,14 +69,14 @@ class EnqueueServiceProvider extends ServiceProvider
         });
 
         $this->app->extend('queue.worker', function ($worker, $app) {
-            return new Worker(
+            return (new Worker(
                 $app['queue'],
                 $app['events'],
                 $app[ExceptionHandler::class],
                 function () use ($app) {
                     return $app->isDownForMaintenance();
                 }
-            );
+            ))->setExtensions($this->extensions);
         });
     }
 }

@@ -40,6 +40,8 @@ class Worker extends \Illuminate\Queue\Worker implements
 
     protected $job;
 
+    protected $extensions = [];
+
     public function daemon($connectionName, $queueNames, WorkerOptions $options)
     {
         $this->connectionName = $connectionName;
@@ -56,7 +58,9 @@ class Worker extends \Illuminate\Queue\Worker implements
         }
 
         $context = $this->queue->getQueueInteropContext();
-        $queueConsumer = new QueueConsumer($context, new ChainExtension([$this]));
+        $queueConsumer = new QueueConsumer($context, new ChainExtension(
+            $this->getAllExtensions([$this])
+        ));
         foreach (explode(',', $queueNames) as $queueName) {
             $queueConsumer->bindCallback($queueName, function() {
                 $this->runJob($this->job, $this->connectionName, $this->options);
@@ -85,10 +89,10 @@ class Worker extends \Illuminate\Queue\Worker implements
 
         $context = $this->queue->getQueueInteropContext();
 
-        $queueConsumer = new QueueConsumer($context, new ChainExtension([
+        $queueConsumer = new QueueConsumer($context, new ChainExtension($this->getAllExtensions([
             $this,
             new LimitConsumedMessagesExtension(1),
-        ]));
+        ])));
 
         foreach (explode(',', $queueNames) as $queueName) {
             $queueConsumer->bindCallback($queueName, function() {
@@ -163,5 +167,20 @@ class Worker extends \Illuminate\Queue\Worker implements
 
         parent::stop($status);
     }
-}
 
+    public function setExtensions(array $extensions): self
+    {
+        $this->extensions = $extensions;
+
+        return $this;
+    }
+
+    protected function getAllExtensions(array $array): array
+    {
+        foreach ($this->extensions as $extension) {
+            $array[] = $extension;
+        }
+
+        return $array;
+    }
+}
