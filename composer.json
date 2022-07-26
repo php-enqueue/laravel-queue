@@ -9,12 +9,10 @@
         "illuminate/queue": "^6.0|^7.0|^8.0|^9.0",
         "queue-interop/amqp-interop": "^0.8",
         "queue-interop/queue-interop": "^0.7|^0.8",
-        "enqueue/enqueue": "^0.10",
-        "enqueue/dsn": "^0.10"
+        "enqueue/enqueue-dev": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.5",
-        "enqueue/enqueue": "^0.10",
         "enqueue/null": "^0.10@dev",
         "enqueue/test": "^0.10@dev",
         "enqueue/simple-client": "^0.10@dev"
@@ -25,6 +23,12 @@
             "/Tests/"
         ]
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/weconnectdata/enqueue-dev"
+        }
+    ],
     "suggest": {
         "enqueue/simple-client": "If you want to use enqueue client and cli commands"
     },

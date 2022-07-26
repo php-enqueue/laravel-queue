@@ -9,6 +9,7 @@ use Interop\Queue\Consumer;
 use Interop\Queue\Context;
 use Interop\Queue\Exception\DeliveryDelayNotSupportedException;
 use Interop\Queue\Message;
+use ReflectionClass;
 
 class Job extends BaseJob implements JobContract
 {
@@ -54,13 +55,49 @@ class Job extends BaseJob implements JobContract
     /**
      * {@inheritdoc}
      */
+    public function fire()
+    {
+        $handlerClass = config('queue.connections.' . $this->getConnectionName() . '.handler');
+        $timeout = config('queue.connections.' . $this->getConnectionName() . '.timeout');
+
+        if (! empty($handlerClass)) {
+            return (new $handlerClass($this->consumer->receive($timeout)))->handle();
+        } else {
+            return parent::fire();
+        }
+    }
+
+    /**
+     * In case the payload is not a serialised PHP message, provide a default fall back
+     *
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function payload()
+    {
+        if (empty(parent::payload())) {
+            $handlerClass = config('queue.connections.' . $this->getConnectionName() . '.handler');
+
+            if (! empty($handlerClass)) {
+                return [
+                    'job' =>  $handlerClass
+                ];
+            }
+        }
+
+        return parent::payload();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function release($delay = 0)
     {
         parent::release($delay);
 
         $requeueMessage = clone $this->message;
         $requeueMessage->setProperty('x-attempts', $this->attempts() + 1);
-        
+
         $producer = $this->context->createProducer();
 
         try {
