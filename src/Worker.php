@@ -144,7 +144,7 @@ class Worker extends \Illuminate\Queue\Worker implements
         }
     }
 
-    public function stop($status = 0)
+    public function stop($status = 0, $options = null)
     {
         if ($this->interop) {
             $this->stopped = true;
@@ -152,7 +152,7 @@ class Worker extends \Illuminate\Queue\Worker implements
             return;
         }
 
-        parent::stop($status);
+        parent::stop($status, $options);
     }
 }
 
