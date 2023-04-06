@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1",
-        "illuminate/queue": "^6.0|^7.0|^8.0|^9.0",
+        "illuminate/queue": "^6.0|^7.0|^8.0|^9.0|^10.0",
         "queue-interop/amqp-interop": "^0.8",
         "queue-interop/queue-interop": "^0.7|^0.8",
         "enqueue/enqueue": "^0.10",
