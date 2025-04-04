@@ -10,11 +10,4 @@ class SetupBrokerCommand extends SimpleSetupBrokerCommand
     {
         parent::__construct($client->getDriver());
     }
-
-    protected function configure()
-    {
-        parent::configure();
-        
-        $this->setName('enqueue:setup-broker');
-    }
 }
