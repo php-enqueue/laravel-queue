@@ -5,7 +5,7 @@ use Enqueue\SimpleClient\SimpleClient;
 use Enqueue\Symfony\Client\SimpleSetupBrokerCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand('enqueue:setup-broker')]
+#[AsCommand(name: 'enqueue:setup-broker')]
 class SetupBrokerCommand extends SimpleSetupBrokerCommand
 {
     public function __construct(SimpleClient $client)
