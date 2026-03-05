@@ -2,11 +2,15 @@
     "name": "enqueue/laravel-queue",
     "type": "library",
     "description": "Laravel Queue Extension. It uses Enqueue transports",
-    "keywords": ["messaging", "queue", "laravel"],
+    "keywords": [
+        "messaging",
+        "queue",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": ">=7.1",
-        "illuminate/queue": "^11.0|^12.0",
+        "illuminate/queue": "^11.0|^12.0|^13.0",
         "queue-interop/amqp-interop": "^0.8",
         "queue-interop/queue-interop": "^0.7|^0.8",
         "enqueue/enqueue": "^0.10",
@@ -20,7 +24,9 @@
         "enqueue/simple-client": "^0.10@dev"
     },
     "autoload": {
-        "psr-4": { "Enqueue\\LaravelQueue\\": "src/" },
+        "psr-4": {
+            "Enqueue\\LaravelQueue\\": "src/"
+        },
         "exclude-from-classmap": [
             "/Tests/"
         ]
